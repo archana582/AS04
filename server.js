@@ -6,7 +6,7 @@ const app = express();
 //body parser setup and general middleware
 const path = require("path");
 const bodyParser = require("body-parser");
-
+//const cors = require("cors");
 const exphbs = require("express-handlebars");
 // app.use(express.static("assets"));
 app.use(express.static("assets"));
@@ -58,7 +58,7 @@ const indexpage = index.model("index", indexSchema);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(bodyParser.json());
-
+app.use(cors());
 
 //engine setup
 app.engine(".hbs", exphbs.engine({ extname: ".hbs" }));
