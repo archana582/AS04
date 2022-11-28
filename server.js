@@ -2,16 +2,16 @@ var HTTP_PORT = process.env.PORT || 8080;
 //express setup
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
 
 //body parser setup and general middleware
 const path = require("path");
 const bodyParser = require("body-parser");
-//const cors = require("cors");
+
 const exphbs = require("express-handlebars");
 // app.use(express.static("assets"));
 app.use(express.static("assets"));
 
-const mongoose = require("mongoose");
 
 //mongoose setup
 // mongoose.connect("mongodb+srv://Shibu:Ndheru666@senecaweb.l0lyg88.mongodb.net/?retryWrites=true&w=majority", {
@@ -29,8 +29,15 @@ const article = mongoose.createConnection(
   "mongodb+srv://Shibu:Ndheru666@senecaweb.l0lyg88.mongodb.net/?retryWrites=true&w=majority"
 );
 
-const indexSchema = new mongoose.Schema({
+const articleSchema = new mongoose.Schema({
   index_name: String,
+});
+
+const indexSchema = new mongoose.Schema({
+  title: String,
+  date: String,
+  content: String,
+  image: String,
 });
 
 let users = [];
@@ -54,16 +61,21 @@ const registerSchema = new mongoose.Schema({
 
 const userlogo = register.model("registeration", registerSchema);
 const indexpage = index.model("index", indexSchema);
-
+const articlepage = article.model("article", articleSchema);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(bodyParser.json());
-app.use(cors());
+
 
 //engine setup
 app.engine(".hbs", exphbs.engine({ extname: ".hbs" }));
 app.set("view engine", ".hbs");
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "/index.html"));
+  });
+
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "/index.html"));
@@ -128,6 +140,23 @@ app.post("/login", function (req, res) {
       });
   }
 });
+
+//article page
+app.get("/article", (req, res) => {
+  res.render("/", { layout: false });
+});
+
+app.get("/article", (req, res) => {
+  indexpage.findOne({ title: req.body.title }).exec().then((data) => {
+    if(data){
+      res.render("readMore", { title: data.title, date: data.date, content: data.content, image: data.image, layout: false });
+    }else{
+      res.sendFile(path.join(__dirname, "/index.html"));
+      //snde error message
+    }
+  });
+});
+
 
 app.get("/registeration", function (req, res) {
   res.render("registeration", { layout: false });
@@ -206,6 +235,44 @@ app.post("/registration", function (req, res) {
     }
   });
 });
+
+//add article page
+app.get('/AddArticle', (req, res) => {
+  res.render('AddArticle', {layout: false});
+});
+
+app.post('/AddArticle', (req, res) => {
+  let articleInfo = new indexpage({
+    title: req.body.title,
+    date: req.body.date,
+    content: req.body.content,
+    image: req.body.image,
+  }).save((e, data) => {
+    if (e) {
+      console.log(e);
+    } else {
+      console.log(data);
+    }
+  });
+  res.redirect('/');
+});
+//make routest for readMore
+app.get("/readMore", function(req, res) {
+  indexpage.find().exec().then((data) =>{
+      let blogData = new Array;
+      data.forEach(element => {
+          blogData.push({
+              title: element.title,
+              date: element.date,
+              content: element.content,
+              image: element.image
+          });
+      });
+      res.render("readMore", { admData: blogData, layout: false});
+  });
+});
+
+
 
 app.use((req, res) => {
   res.status(404).send("404: Page not Found");

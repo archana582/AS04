@@ -1,1 +1,8 @@
 mongodb+srv://Shibu:Ndheru666@senecaweb.l0lyg88.mongodb.net/?retryWrites=true&w=majority
+
+// app.post('/updateArticle', (req, res) => {
+//   indexpage.updateOne({updateID: req.body.updateID},
+//     {$set: {title: req.body.title, date: req.body.date, content: req.body.content, image: req.body.image}})
+//   .exec();
+//   res.redirect('/login_dashboard');
+// });
