@@ -58,7 +58,7 @@
           <div class="card-body" style="width: 38rem" ;>
             <h5 class="card-title">{{this.title}}</h5>
             <p class="card-text">{{this.content}}</p>
-            <a href="/readMore{{this._id}}" class="btn btn-primary">Read More</a>
+            <a href="/articles/{{this._id}}" class="btn btn-primary">Read More</a>
           <div class="card-body ">
             <div class="card shadow-sm">
                 <img src="{{this.image}}" alt="Logo" width="100%" height="400px" />
@@ -67,7 +67,7 @@
                 <p class="card-text">{{this.date}}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <form action="/article" method="post">
+                    <form action="/articles" method="post">
                     <input type="hidden" name="title" id="title" value="{{this.title}}">
                     <input type="hidden" name="content" id="content" value="{{this.content}}">
                     <input type="hidden" name="date" id="date" value="{{this.date}}">
